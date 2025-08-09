@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encuesta de Validación: Cuidado de Adulto Mayor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .form-section {
+            border-top: 8px solid #4a148c; /* Color similar a Google Forms */
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #4a148c;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .dragging {
+            opacity: 0.5;
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+<body class="bg-purple-50 flex justify-center items-start min-h-screen p-4 sm:p-8">
+    <form id="survey-form" class="w-full max-w-2xl">
+        <!-- Encabezado del Formulario -->
+        <div class="bg-white rounded-lg shadow-md form-section">
+            <div class="p-6 border-b border-gray-200">
+                <h1 class="text-3xl font-bold text-gray-800">Validación de Servicio de Cuidado para Adulto Mayor</h1>
+                <p class="text-sm text-gray-600 mt-4">Hola, mi nombre es Luis Silva y soy estudiante de Magíster de la Universidad de Chile. Esta encuesta es parte de mi tesis y busca entender los desafíos que enfrentan las familias en el **cuidado a domicilio** de sus padres mayores.</p>
+                <p class="text-sm text-gray-600 mt-2">Tus respuestas son **100% anónimas y confidenciales** y serán de gran ayuda para mi investigación. ¡Muchas gracias por tu tiempo!</p>
+            </div>
+        </div>
+
+        <!-- Sección 1: Preguntas de Filtro -->
+        <div class="bg-white rounded-lg shadow-md mt-6 p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-1">Sección 1: Para comenzar</h2>
+            <p class="text-sm text-gray-500 mb-6">Esta pregunta nos ayudará a dirigir la encuesta.</p>
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 font-semibold mb-2">1. ¿Actualmente participas de alguna manera en el cuidado de uno de tus padres o de un familiar mayor de 70 años? <span class="text-red-500">*</span></label>
+                <div class="flex flex-col space-y-2">
+                    <label class="flex items-center"><input type="radio" name="filtro_cuidado" value="si" class="mr-2" required> Sí</label>
+                    <label class="flex items-center"><input type="radio" name="filtro_cuidado" value="no" class="mr-2"> No</label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contenido para quienes respondieron SÍ -->
+        <div id="path-yes" class="hidden">
+             <div class="bg-white rounded-lg shadow-md mt-6 p-6">
+                 <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">2. ¿Cuál es el nivel de dependencia de tu familiar? (Elige una opción) <span class="text-red-500">*</span></label>
+                    <div class="flex flex-col space-y-2">
+                        <label class="flex items-center"><input type="radio" name="dependencia" class="mr-2" value="autovalente"> 1 - Es autovalente, solo necesita compañía y supervisión.</label>
+                        <label class="flex items-center"><input type="radio" name="dependencia" class="mr-2" value="ayuda parcial"> 2 - Necesita ayuda para algunas actividades (ej. cocinar, compras).</label>
+                        <label class="flex items-center"><input type="radio" name="dependencia" class="mr-2" value="dependencia moderada"> 3 - Dependencia moderada (necesita ayuda para moverse o vestirse).</label>
+                        <label class="flex items-center"><input type="radio" name="dependencia" class="mr-2" value="dependencia alta"> 4 - Dependencia alta (requiere asistencia en la mayoría de las actividades).</label>
+                        <label class="flex items-center"><input type="radio" name="dependencia" class="mr-2" value="dependencia total"> 5 - Dependencia total (postrado o con deterioro cognitivo severo).</label>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md mt-6 p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-1">Sección 2: Tu Experiencia con el Cuidado</h2>
+                <p class="text-sm text-gray-500 mb-6">Queremos entender los desafíos reales que enfrentas.</p>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">3. Al pensar en el cuidado de tu familiar, por favor, ordena los siguientes desafíos del 1 (más difícil) al 4 (menos difícil). <span class="text-red-500">*</span></label>
+                    <p class="text-xs text-gray-500 mb-3">(Haz clic y arrastra para ordenar)</p>
+                    <div id="ranking-desafios" class="space-y-2 border p-3 rounded-md bg-gray-50">
+                        <div class="p-2 bg-white border rounded-md cursor-move flex items-center" draggable="true" data-value="La carga emocional (culpa, estrés, ansiedad)"><svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>La carga emocional (culpa, estrés, ansiedad)</div>
+                        <div class="p-2 bg-white border rounded-md cursor-move flex items-center" draggable="true" data-value="El tiempo y la logística que me consume"><svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>El tiempo y la logística que me consume</div>
+                        <div class="p-2 bg-white border rounded-md cursor-move flex items-center" draggable="true" data-value="La coordinación con otros familiares"><svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>La coordinación con otros familiares</div>
+                        <div class="p-2 bg-white border rounded-md cursor-move flex items-center" draggable="true" data-value="La carga económica"><svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>La carga económica</div>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">4. Si alguna vez has pensado en contratar ayuda profesional, ¿cuáles han sido las barreras que te han detenido? (Elige todas las que apliquen) <span class="text-red-500">*</span></label>
+                     <div class="flex flex-col space-y-2">
+                        <label class="flex items-center"><input type="checkbox" name="barrera" class="mr-2" value="Desconfianza"> No confío en dejar a mi familiar con un extraño.</label>
+                        <label class="flex items-center"><input type="checkbox" name="barrera" class="mr-2" value="Costo"> El costo es demasiado alto.</label>
+                        <label class="flex items-center"><input type="checkbox" name="barrera" class="mr-2" value="Deber personal"> Siento que es mi deber como hijo/a hacerlo yo mismo/a.</label>
+                        <label class="flex items-center"><input type="checkbox" name="barrera" class="mr-2" value="No saber dónde buscar"> No sé dónde buscar a alguien calificado.</label>
+                    </div>
+                </div>
+                 <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">5. ¿Cómo has buscado soluciones o información sobre el cuidado? (Elige la principal) <span class="text-red-500">*</span></label>
+                     <div class="flex flex-col space-y-2">
+                        <label class="flex items-center"><input type="radio" name="busqueda" class="mr-2"> Conversando con amigos y familiares (pedir "datos").</label>
+                        <label class="flex items-center"><input type="radio" name="busqueda" class="mr-2"> Buscando en Google o portales de avisos.</label>
+                        <label class="flex items-center"><input type="radio" name="busqueda" class="mr-2"> Consultando con profesionales de la salud (médicos, etc.).</label>
+                        <label class="flex items-center"><input type="radio" name="busqueda" class="mr-2"> Contactando agencias de cuidado tradicionales.</label>
+                        <label class="flex items-center"><input type="radio" name="busqueda" class="mr-2"> No he buscado activamente.</label>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md mt-6 p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-1">Sección 3: La Solución Ideal</h2>
+                <p class="text-sm text-gray-500 mb-6">Ayúdanos a entender qué es lo más importante para ti.</p>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">6. Si fueras a contratar un servicio de cuidado, ¿qué te daría más confianza? (Elige hasta 2 opciones) <span class="text-red-500">*</span></label>
+                    <div class="flex flex-col space-y-2">
+                        <label class="flex items-center"><input type="checkbox" name="confianza" class="mr-2"> Que el servicio realice un test psicológico al cuidador.</label>
+                        <label class="flex items-center"><input type="checkbox" name="confianza" class="mr-2"> Que el cuidador tenga un título técnico o profesional (ej. TENS).</label>
+                        <label class="flex items-center"><input type="checkbox" name="confianza" class="mr-2"> Tener acceso a referencias verificadas de otras familias.</label>
+                        <label class="flex items-center"><input type="checkbox" name="confianza" class="mr-2"> Que el servicio ofrezca una garantía de reemplazo si no estoy conforme.</label>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">7. Más allá del cuidado básico y la seguridad, ¿qué servicio adicional valorarías más? (Elige solo uno) <span class="text-red-500">*</span></label>
+                    <div class="flex flex-col space-y-2">
+                        <label class="flex items-center"><input type="radio" name="valor_agregado" class="mr-2" value="Actividades de estimulación"> Un plan de actividades de estimulación cognitiva y social para mi familiar.</label>
+                        <label class="flex items-center"><input type="radio" name="valor_agregado" class="mr-2" value="Coordinación familiar"> Una plataforma para coordinar visitas y pagos con mis hermanos.</label>
+                        <label class="flex items-center"><input type="radio" name="valor_agregado" class="mr-2" value="Informes diarios"> Informes diarios detallados sobre el estado y ánimo de mi familiar.</label>
+                        <label class="flex items-center"><input type="radio" name="valor_agregado" class="mr-2" value="Acceso a otros profesionales"> Acceso a consultas con otros profesionales (kinesiólogos, nutricionistas).</label>
+                    </div>
+                </div>
+                 <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">8. Pensando en un servicio profesional y garantizado, ¿qué rango de precio mensual considerarías justo pagar por un servicio de cuidado a tiempo parcial (ej. 4 horas al día, de lunes a viernes)? <span class="text-red-500">*</span></label>
+                    <div class="flex flex-col space-y-2">
+                        <label class="flex items-center"><input type="radio" name="precio" class="mr-2"> Menos de $400.000</label>
+                        <label class="flex items-center"><input type="radio" name="precio" class="mr-2"> Entre $400.000 y $600.000</label>
+                        <label class="flex items-center"><input type="radio" name="precio" class="mr-2"> Entre $600.000 y $800.000</label>
+                        <label class="flex items-center"><input type="radio" name="precio" class="mr-2"> Más de $800.000</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido para quienes respondieron NO -->
+        <div id="path-no" class="hidden">
+             <div class="bg-white rounded-lg shadow-md mt-6 p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-1">Sección 2: Tu Percepción sobre el Cuidado Futuro</h2>
+                <p class="text-sm text-gray-500 mb-6">Aunque no participes directamente hoy, tu perspectiva como futuro cuidador es muy valiosa.</p>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">2. Pensando en el futuro, ¿cuáles crees que serán los mayores desafíos para ti y tu familia cuando deban gestionar el cuidado de sus padres? (Elige todos los que apliquen) <span class="text-red-500">*</span></label>
+                    <div class="flex flex-col space-y-2">
+                        <label class="flex items-center"><input type="checkbox" name="desafio_no" class="mr-2" value="La carga emocional y el estrés."> La carga emocional y el estrés.</label>
+                        <label class="flex items-center"><input type="checkbox" name="desafio_no" class="mr-2" value="El alto costo económico."> El alto costo económico.</label>
+                        <label class="flex items-center"><input type="checkbox" name="desafio_no" class="mr-2" value="La falta de tiempo y la logística."> La falta de tiempo y la logística.</label>
+                        <label class="flex items-center"><input type="checkbox" name="desafio_no" class="mr-2" value="La coordinación con otros familiares."> La coordinación con otros familiares.</label>
+                    </div>
+                </div>
+                 <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">3. Si en el futuro necesitaras contratar ayuda profesional a domicilio, ¿cuáles serían tus mayores temores o preocupaciones? (Elige todos los que apliquen) <span class="text-red-500">*</span></label>
+                    <div class="flex flex-col space-y-2">
+                        <label class="flex items-center"><input type="checkbox" name="temor_no" class="mr-2"> Que no traten bien a mi familiar (seguridad y calidad del trato).</label>
+                        <label class="flex items-center"><input type="checkbox" name="temor_no" class="mr-2"> El alto costo que pueda tener.</label>
+                        <label class="flex items-center"><input type="checkbox" name="temor_no" class="mr-2"> Perder el control de la situación y el cuidado de mi familiar.</label>
+                        <label class="flex items-center"><input type="checkbox" name="temor_no" class="mr-2"> No encontrar a alguien realmente calificado y profesional.</label>
+                    </div>
+                </div>
+                 <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">4. Pensando en ese futuro, ¿qué sería lo más importante que un servicio de cuidado debería ofrecerte para que confíes en él? (Elige hasta 2 opciones) <span class="text-red-500">*</span></label>
+                    <div class="flex flex-col space-y-2">
+                        <label class="flex items-center"><input type="checkbox" name="confianza_no" class="mr-2"> Un proceso de selección de cuidadores extremadamente riguroso (tests, etc.).</label>
+                        <label class="flex items-center"><input type="checkbox" name="confianza_no" class="mr-2"> La recomendación y validación de profesionales de la salud.</label>
+                        <label class="flex items-center"><input type="checkbox" name="confianza_no" class="mr-2"> Transparencia total y acceso a información sobre el cuidador.</label>
+                        <label class="flex items-center"><input type="checkbox" name="confianza_no" class="mr-2"> Una marca con muy buena reputación y testimonios de otras familias.</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Final: Común para todos -->
+        <div id="final-section" class="hidden">
+            <div class="bg-white rounded-lg shadow-md mt-6 p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-1">Sección Final: Un poco sobre ti</h2>
+                <p class="text-sm text-gray-500 mb-6">Estos datos son anónimos y nos ayudan a entender mejor las respuestas.</p>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">Rango de Ingreso Mensual de tu Hogar (Líquido): <span class="text-red-500">*</span></label>
+                    <div class="flex flex-col space-y-2">
+                        <label class="flex items-center"><input type="radio" name="ingreso" class="mr-2"> Menos de $700.000</label>
+                        <label class="flex items-center"><input type="radio" name="ingreso" class="mr-2"> Entre $700.001 y $1.500.000</label>
+                        <label class="flex items-center"><input type="radio" name="ingreso" class="mr-2"> Entre $1.500.001 y $2.500.000</label>
+                        <label class="flex items-center"><input type="radio" name="ingreso" class="mr-2"> Entre $2.500.001 y $4.000.000</label>
+                        <label class="flex items-center"><input type="radio" name="ingreso" class="mr-2"> Más de $4.000.000</label>
+                    </div>
+                </div>
+                 <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">Pensando en el financiamiento del cuidado, ¿cómo se cubre o se cubriría el costo? <span class="text-red-500">*</span></label>
+                    <div class="flex flex-col space-y-2">
+                        <label class="flex items-center"><input type="radio" name="financiamiento" class="mr-2"> Principalmente con mis propios ingresos.</label>
+                        <label class="flex items-center"><input type="radio" name="financiamiento" class="mr-2"> Se divide en partes iguales entre varios hermanos/familiares.</label>
+                        <label class="flex items-center"><input type="radio" name="financiamiento" class="mr-2"> Un hermano/familiar aporta más que otros, pero es un esfuerzo compartido.</label>
+                        <label class="flex items-center"><input type="radio" name="financiamiento" class="mr-2"> Principalmente con los ahorros o la pensión de mi familiar.</label>
+                        <label class="flex items-center"><input type="radio" name="financiamiento" class="mr-2"> No lo hemos discutido aún.</label>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">Comuna de Residencia (Región Metropolitana): <span class="text-red-500">*</span></label>
+                    <select name="comuna" class="w-full p-2 border rounded-md">
+                        <option>Cerrillos</option> <option>Cerro Navia</option> <option>Conchalí</option> <option>El Bosque</option> <option>Estación Central</option> <option>Huechuraba</option> <option>Independencia</option> <option>La Cisterna</option> <option>La Florida</option> <option>La Granja</option> <option>La Pintana</option> <option>La Reina</option> <option>Las Condes</option> <option>Lo Barnechea</option> <option>Lo Espejo</option> <option>Lo Prado</option> <option>Macul</option> <option>Maipú</option> <option>Ñuñoa</option> <option>Pedro Aguirre Cerda</option> <option>Peñalolén</option> <option>Providencia</option> <option>Pudahuel</option> <option>Quilicura</option> <option>Quinta Normal</option> <option>Recoleta</option> <option>Renca</option> <option>San Joaquín</option> <option>San Miguel</option> <option>San Ramón</option> <option>Santiago</option> <option>Vitacura</option> <option>Padre Hurtado</option> <option>Peñaflor</option> <option>Talagante</option> <option>Isla de Maipo</option> <option>El Monte</option> <option>Melipilla</option> <option>San Pedro</option> <option>Alhué</option> <option>Curacaví</option> <option>María Pinto</option> <option>Buin</option> <option>Paine</option> <option>San Bernardo</option> <option>Calera de Tango</option> <option>Colina</option> <option>Lampa</option> <option>Tiltil</option> <option>San José de Maipo</option> <option>Pirque</option> <option>Puente Alto</option>
+                    </select>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md mt-6 p-6">
+                 <h3 class="text-lg font-bold text-purple-800">✨ Tu Agradecimiento Personalizado</h3>
+                 <p class="text-sm text-gray-600 mt-2">Basado en tus respuestas, podemos generar con IA un pequeño plan de acción con consejos para ayudarte. ¡Es nuestro agradecimiento por tu tiempo!</p>
+                 <button id="gemini-button" type="button" class="mt-4 w-full bg-purple-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-purple-800 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    Generar mi plan de acción
+                 </button>
+                 <div id="gemini-loading" class="hidden flex justify-center items-center mt-4">
+                     <div class="loader"></div>
+                 </div>
+                 <div id="gemini-result" class="hidden mt-4 p-4 bg-purple-100 border border-purple-200 rounded-lg text-gray-800"></div>
+            </div>
+            <div class="mt-6">
+                <button type="submit" class="w-full bg-gray-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors">Enviar Encuesta</button>
+            </div>
+            <div id="submit-message" class="hidden mt-4 p-4 text-center bg-green-100 text-green-800 rounded-lg"></div>
+        </div>
+    </form>
+
+    <script>
+        // --- Lógica para mostrar/ocultar caminos ---
+        const filtroRadios = document.querySelectorAll('input[name="filtro_cuidado"]');
+        const pathYes = document.getElementById('path-yes');
+        const pathNo = document.getElementById('path-no');
+        const finalSection = document.getElementById('final-section');
+
+        filtroRadios.forEach(radio => {
+            radio.addEventListener('change', (event) => {
+                finalSection.classList.remove('hidden');
+                if (event.target.value === 'si') {
+                    pathYes.classList.remove('hidden');
+                    pathNo.classList.add('hidden');
+                } else {
+                    pathNo.classList.remove('hidden');
+                    pathYes.classList.add('hidden');
+                }
+            });
+        });
+
+        // --- Lógica para la IA Simulada ---
+        const geminiButton = document.getElementById('gemini-button');
+        const geminiLoading = document.getElementById('gemini-loading');
+        const geminiResult = document.getElementById('gemini-result');
+
+        geminiButton.addEventListener('click', async () => {
+            geminiButton.disabled = true;
+            geminiLoading.classList.remove('hidden');
+            geminiResult.classList.add('hidden');
+            geminiResult.innerHTML = '';
+            
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Simular espera
+
+            const esCuidador = document.querySelector('input[name="filtro_cuidado"]:checked')?.value === 'si';
+            let simulatedResponse = "";
+
+            if(esCuidador) {
+                simulatedResponse = `
+                    <p>Gracias por compartir tu experiencia. Es completamente normal sentir el peso de la carga emocional y logística; es una de las realidades más difíciles de ser un cuidador familiar.</p>
+                    <p class="mt-2">Basado en lo que nos cuentas, aquí tienes algunas sugerencias que podrían ayudarte:</p>
+                    <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+                        <li><strong>Busca "micro-descansos":</strong> Aunque no puedas tomarte un día libre, intenta agendar pequeños momentos de 15 minutos solo para ti durante el día. Un café en silencio, una caminata corta. Protege esos espacios.</li>
+                        <li><strong>Conversa sobre la "ayuda específica":</strong> A veces, pedir ayuda a los hermanos de forma general no funciona. Intenta pedir tareas concretas: "¿Puedes encargarte de las compras de la semana?" o "¿Puedes llamar a papá todos los martes por la tarde?".</li>
+                    </ul>
+                    <p class="mt-2">Recuerda que cuidar de ti mismo/a no es egoísta, es lo que te permitirá seguir cuidando de tu familiar a largo plazo. ¡No estás solo/a en esto!</p>
+                `;
+            } else {
+                 simulatedResponse = `
+                    <p>Muchas gracias por tu valiosa perspectiva. Anticipar los desafíos del cuidado es el primer y más importante paso para estar preparado.</p>
+                    <p class="mt-2">Tus temores sobre la confianza y la calidad del trato son los más comunes y válidos. Una buena forma de empezar a prepararse es conversar abiertamente con tus padres sobre sus deseos y voluntades para el futuro, incluso antes de que la necesidad de cuidado sea urgente. Abrir ese canal de comunicación ahora hará que las decisiones futuras sean mucho más fáciles para todos.</p>
+                    <p class="mt-2">Gracias de nuevo por tu contribución.</p>
+                `;
+            }
+
+            geminiResult.innerHTML = simulatedResponse;
+            geminiLoading.classList.add('hidden');
+            geminiResult.classList.remove('hidden');
+            geminiButton.disabled = false;
+        });
+
+        // --- Lógica para enviar datos a Google Sheets ---
+        const form = document.getElementById('survey-form');
+        const submitMessage = document.getElementById('submit-message');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            
+            const scriptURL = https://script.google.com/macros/s/AKfycbz52nKE_3sBPb_1qDuOjJfPAvIt0soJ-DCXwKmYTTo_fSpBacDC55SajnNwmxJ9aay0/exec; // <-- REEMPLAZA ESTO
+            const formData = new FormData(form);
+            
+            fetch(scriptURL, { method: 'POST', body: formData})
+                .then(response => {
+                    submitMessage.textContent = '¡Gracias! Tus respuestas han sido enviadas con éxito.';
+                    submitMessage.classList.remove('hidden');
+                    form.reset();
+                    pathYes.classList.add('hidden');
+                    pathNo.classList.add('hidden');
+                    finalSection.classList.add('hidden');
+                })
+                .catch(error => {
+                    submitMessage.textContent = 'Error al enviar. Por favor, intenta de nuevo.';
+                    submitMessage.classList.remove('hidden');
+                    submitMessage.classList.replace('bg-green-100', 'bg-red-100');
+                    submitMessage.classList.replace('text-green-800', 'text-red-800');
+                    console.error('Error!', error.message);
+                });
+        });
+    </script>
+</body>
+</html>
